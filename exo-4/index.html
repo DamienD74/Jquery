@@ -35,7 +35,7 @@
                     <li class="active">
                         <a href="#">Home</a>
                     </li>
-                    <li>
+                    <li class="product">
                         <a href="#">Products</a>
                     </li>
                 </ul>
@@ -93,7 +93,33 @@
             <button type="button" class="btn btn-danger">Sign Up</button>
         </form>
     </footer>
-
+    <script>
+        $(".btn").on("click", function()
+        {
+            alert("Merci " + $(".form-control").val());
+        });
+        $(".product").dblclick(function()
+        {
+            console.log("prout");
+            $(this).hide();
+        })
+        let nbProduct = 0;
+        $("img").on("click", function()
+        {parent()
+            var nb = $(this)..parent().children("div:last").text();
+            nb = nb.replace(/\D/g,'');
+            nbProduct += parseInt(nb);
+            if (nbProduct > 1)
+            {
+                $(".glyphicon-shopping-cart").parent().html("<span class='glyphicon glyphicon-shopping-cart'></span> Cart " + nbProduct);
+            }
+            $(".glyphicon-shopping-cart").css("color", "orange");
+        });
+        $("img").mouseover(function()
+        {
+            console.log("L'utilisateur regarde " + $(this).attr("src"));
+        });
+    </script>
 </body>
 
 </html>
