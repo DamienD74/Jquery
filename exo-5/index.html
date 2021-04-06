@@ -1,25 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <title>Exercice 5</title>
     <meta charset="utf-8">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="script.js"></script>
 </head>
 
 <body>
     <div class="container">
-        <img src="img/Pierre.jpg" height="250">
-        <img src="img/Feuille.jpg" height="250">
-        <img src="img/Ciseau.webp" height="250">
+        <img src="img/Pierre.jpg" height="250" alt="Pierre">
+        <img src="img/Feuille.jpg" height="250" alt="Feuille">
+        <img src="img/Ciseau.webp" height="250" alt="Ciseau">
     </div>
+    <div id="userChoice"></div>
+    <div id="computerChoice"></div>
+    <div id="result"></div>
     <script>
         $("img").on("click", function()
         {
-            
+            if ($("#userChoice").children().length > 0)
+            {
+                $("#userChoice img").attr("src", ($(this).attr("src"))).attr("alt", $(this).attr("alt")).attr("height", $(this).attr("height"));
+            }
+            else
+            {
+                $("#userChoice").append($("<img>",{src: $(this).attr("src"), alt: $(this).attr("alt"), height: $(this).attr("height")}));
+            }
+
+            let computerSelected = getComputerChoice();
+
+            console.log(computerSelected.attr("src"));
+            console.log(computerSelected.attr("alt"));
+            console.log(computerSelected.height());
+
+            if ($("#computerChoice").children().length > 0)
+            {
+                $("#computerChoice img").attr("src", computerSelected.attr("src")).attr("alt", computerSelected.attr("alt")).attr("height", computerSelected.attr("height"));
+            }
+            else
+            {
+                $("#computerChoice").append($("<img>",{src: computerSelected.attr("src"), alt: computerSelected.attr("alt"), height: computerSelected.height()}));
+            }
+
+            getResult($(this).attr("alt") ,computerSelected.attr("alt"));
+
+            console.log("Vous avez sélectionné " + $(this).attr("alt"));
         });
+
+        function getComputerChoice()
+        {
+            var nb = Math.floor((Math.random() * 3));
+
+            if (nb == 0)
+            {
+                return $("<img>",{src: "img/Pierre.jpg", alt: "Pierre", height: "250"});
+            }
+            else if (nb == 1)
+            {
+                return $("<img>",{src: "img/Feuille.jpg", alt: "Feuille", height: "250"});
+            }
+            else
+            {
+                return $("<img>",{src: "img/Ciseau.webp", alt: "Ciseaux", height: "250"});
+            }
+        }
+
+        function getResult(playerChoice, computerChoice)
+        {
+            if (playerChoice == computerChoice)
+            {
+                $("#result").text("Tied").css("color", "grey");
+            }
+            else if ((playerChoice == "Pierre" && computerChoice == "Ciseaux") || (playerChoice == "Feuille" && computerChoice == "Pierre") || (playerChoice == "Ciseaux" && computerChoice == "Feuille"))
+            {
+                $("#result").text("Gagné").css("color", "green");
+            }
+            else
+            {
+                $("#result").text("Perdu").css("color", "red");
+            }
+        }
     </script>
 </body>
 
