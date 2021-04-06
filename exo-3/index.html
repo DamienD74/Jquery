@@ -103,16 +103,36 @@
         <p>Footer Text</p>
     </footer>
     <script>
+        const listImg = [
+            "img/BebeBarbe.png",
+            "img/plaqueProut.jpg",
+            "img/prout2.jpg",
+            "img/prout3.jpg",
+            "img/prout5.jpg",
+            "img/prout6.jpg",
+            "img/prout7.jpg",
+            "img/prout8.jpg"
+        ]
         $("h1").text("Prout");
         $("#tagline").text("Je fais du bruit");
         $(".nav:first-of-type").remove();
         $(".glyphicon-log-in").addClass("bi bi-person").removeClass("glyphicon-log-in");
-        $("footer").text("Copyright 2021").css("font-weight", "bold");
+        $("footer").text("Copyright 2021").css("font-weight", "bold").addClass("intro");
         $(".col-sm-3 p").each(function (i)
         {
-            $(this).text("Mon Projet " + i);
+            $(this).text("Mon Projet " + i);           
         })
+        $(".col-sm-3 img").each(function (i)
+        {
+            $(this).attr("src", listImg[i]);          
+        })
+        $("h3").append("<div id=projetPrincipal>");
+        $("#projetPrincipal").append("<p id=textProjetPrincipal>");
+        $("#textProjetPrincipal").text($(".col-sm-3 p:last").text());    
+        $("#projetPrincipal").append("<img id=imgProjetPrincipal height=250>");
+        $("#imgProjetPrincipal").attr("src", $(".col-sm-3 img:last").attr("src"));
     </script>
+
 </body>
 
 </html>
