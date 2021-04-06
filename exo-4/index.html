@@ -105,8 +105,8 @@
         })
         let nbProduct = 0;
         $("img").on("click", function()
-        {parent()
-            var nb = $(this)..parent().children("div:last").text();
+        {
+            var nb = $(this).parent().parent().children("div:last").text();
             nb = nb.replace(/\D/g,'');
             nbProduct += parseInt(nb);
             if (nbProduct > 1)
