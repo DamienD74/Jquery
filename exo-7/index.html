@@ -10,6 +10,8 @@
     <script type="text/javascript" src="DATA.js"></script>
     <script src="script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="table2csv.js"></script>
 </head>
 
 <body>
@@ -19,21 +21,64 @@
             <input type="text" id="firstNameChoice">
             <input type="button" onclick="refreshPage('firstName')" value="Recherche">
         </div>
-        <table>
+        <div>
+            <div>Trie</div>
+            <select id="selectTri" onchange="refreshPage('id')">
+                <Option value="id">Id</Option>
+                <Option value="email">Email</Option>
+                <Option value="firstName">Prénom</Option>
+                <Option value="lastName">Nom</Option>
+                <Option value="phone">Téléphone</Option>
+            </select>
+            <a>ASC</a>
+            <input type="checkbox" id="checkboxASC" onchange="refreshPage('id')">
+        </div>
+        <div>
+            <div>Ajouter</div>
+            <table>
+                <THead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Téléphone</th>
+                        <th>Genre</th>
+                        <th>Habitation</th>
+                    </tr>
+                </THead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" id="addEmail"></td>
+                        <td><input type="text" id="addLastName"></td>
+                        <td><input type="text" id="addFirstName"></td>
+                        <td><input type="text" id="addPhone"></td>
+                        <td><input type="text" id="addGender"></td>
+                        <td><input type="text" id="addCountry"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="button" value="Ajouter" onclick="addCustomer()">
+        </div>
+        <table id="tableCustomer">
             <thead>
                 <tr>
                     <th>Email</th>
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th>Numéro</th>
+                    <th>Suppression</th>
+                    <th>Modifier</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody id="bodyList"></tbody>
         </table>
         <div>
             Page
         </div>
         <select id="selectPagination" onchange="refreshPage('id')"></select>
+        <div>
+            <input type="button" value="Export" onclick="exportSVC()">
+        </div>
     </div>
     <script>
         start();
@@ -55,7 +100,18 @@
             {
                 var data = filterName(datas, $("#firstNameChoice").val())
             }
-            addLineToTable(data);
+            addLineToTable(tri(data, $("#selectTri option:selected").val(), $("#checkboxASC").prop('checked')));
+        }
+
+        function refreshSelectPagination()
+        {
+            deleteSelectPagination();
+            addSelectPagination(datas);
+        }
+
+        function deleteSelectPagination()
+        {
+            $("#selectPagination option").remove();
         }
 
         function addSelectPagination(data)
@@ -84,20 +140,180 @@
             return data.filter(element => (element.name.first == firstName));
         }
 
+        function tri(data, byWhat, asc)
+        {
+            if (byWhat == "id")
+            {
+                if (asc)
+                {
+                    data.sort(function(a, b)
+                    {
+                        return a.id - b.id;
+                    })
+                }
+                else
+                {
+                    data.sort(function(a, b)
+                    {
+                        return b.id - a.id;
+                    })
+                }
+            }
+            else if (byWhat == "email")
+            {
+                if (asc)
+                {
+                    data.sort(function(a, b)
+                    {
+                        return a.email.localeCompare(b.email);
+                    });
+                }
+                else
+                {
+                    data.sort(function(a, b)
+                    {
+                        return b.email.localeCompare(a.email);
+                    });
+                }
+            }
+            else if (byWhat == "firstName")
+            {
+                if (asc)
+                {
+                    data.sort(function(a, b)
+                    {
+                        return a.name.first.localeCompare(b.name.first);
+                    });
+                }
+                else
+                {
+                    data.sort(function(a, b)
+                    {
+                        return b.name.first.localeCompare(a.name.first);
+                    });
+                }
+            }
+            else if (byWhat == "lastName")
+            {
+                if (asc)
+                {
+                    data.sort(function(a, b)
+                    {
+                        return a.name.last.localeCompare(b.name.last);
+                    });
+                }
+                else
+                {
+                    data.sort(function(a, b)
+                    {
+                        return b.name.last.localeCompare(a.name.last);
+                    });
+                }
+            }
+            else if (byWhat == "phone")
+            {
+                if (asc)
+                {
+                    data.sort(function(a, b)
+                    {
+                        return a.phone.localeCompare(b.phone);
+                    });
+                }
+                else
+                {
+                    data.sort(function(a, b)
+                    {
+                        return b.phone.localeCompare(a.phone);
+                    });
+                }
+            }
+
+            return data;
+        }
+
         function deleteLineToTable()
         {
-            $("tbody tr").remove();
+            $("#bodyList tr").remove();
         }
 
         function addLineToTable(data)
         {
             data.forEach(element => {
-            $("tbody").append("<tr>");
-            $("tbody tr:last").append($("<td>").text(element.email));
-            $("tbody tr:last").append($("<td>").text(element.name.last));
-            $("tbody tr:last").append($("<td>").text(element.name.first));
-            $("tbody tr:last").append($("<td>").text(element.phone));
+            $("#bodyList").append($("<tr>").attr("id", "customerId"+element.id));
+            $("#bodyList tr:last").append($("<td>").text(element.email));
+            $("#bodyList tr:last").append($("<td>").text(element.name.last));
+            $("#bodyList tr:last").append($("<td>").text(element.name.first));
+            $("#bodyList tr:last").append($("<td>").text(element.phone));
+            $("#bodyList tr:last").append($("<td>").append($("<input>").attr({type: "button", value: "Supprimer", onClick: "deleteCustomer("+element.id+")"})));    
+            $("#bodyList tr:last").append($("<td>").append($("<input>").attr({type: "button", value: "Modifier", onClick: "modifyCustomer("+element.id+")"})));    
             });
+        }
+
+        function deleteCustomer(id)
+        {
+            console.log(id);
+            $("#customerId"+id).remove();
+
+            refreshSelectPagination();
+            addLineToTable(filterPage(datas, selectPage()));
+        }
+        
+        function addCustomer()
+        {
+            var customer = {
+                id: datas.length + 1,
+                name:{first: $("#addFirstName").val(), last: $("#addLastName").val()},
+                email: $("#addEmail").val(),
+                gender: $("#addGender").val(),
+                phone: $("#addPhone").val(),
+                country: $("#addCountry").val()
+            }
+            console.log(customer);
+
+            datas.push(customer);
+
+            refreshSelectPagination();
+            refreshPage("id");
+        }
+
+        function modifyCustomer(id)
+        {
+            data = datas.filter(data => data.id == id);
+            console.log(data);
+            data[0].name.first = $("#addFirstName").val();
+            data[0].name.last = $("#addLastName").val();
+            data[0].email = $("#addEmail").val();
+            data[0].gender = $("#addGender").val();
+            data[0].phone = $("#addPhone").val();
+            data[0].country = $("#addCountry").val();
+
+            datas.splice(id-1, 1, data[0]);
+
+            refreshPage("id");
+        }
+
+        function exportSVC()
+        {
+            $("#tableCustomer").table2csv();
+
+            $("#tableCustomer").table2csv('output', {
+                appendTo: '#out'
+            });
+
+            $("#tableCustomer").table2csv({
+                filename: 'tableCustomer.csv'
+            });
+
+            $("#tableCustomer").table2csv({
+                separator: ',',
+                newline: '\n',
+                quoteFields: true,
+                excludeColumns: '',
+                excludeRows: '',
+                trimContent: true // Trims the content of individual <th>, <td> tags of whitespaces. 
+                });
+
+            $("#tableCustomer").table2csv('return');
         }
     </script>
 </body>
