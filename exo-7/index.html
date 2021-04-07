@@ -14,6 +14,11 @@
 
 <body>
     <div class="container">
+        <div>
+            <div>Recherche</div>
+            <input type="text" id="firstNameChoice">
+            <input type="button" onclick="refreshPage('firstName')" value="Recherche">
+        </div>
         <table>
             <thead>
                 <tr>
@@ -28,7 +33,7 @@
         <div>
             Page
         </div>
-        <select id="selectPagination" onchange="refreshPage()"></select>
+        <select id="selectPagination" onchange="refreshPage('id')"></select>
     </div>
     <script>
         start();
@@ -36,19 +41,26 @@
         function start()
         {
             addSelectPagination(datas);
-            addLineToTable(filterTable(datas, selectPage()));
+            addLineToTable(filterPage(datas, selectPage()));
         }
 
-        function refreshPage()
+        function refreshPage(value)
         {
             deleteLineToTable();
-            addLineToTable(filterTable(datas, selectPage()));
+            if (value == "id")
+            {
+                var data = filterPage(datas, selectPage());
+            }
+            else if (value == "firstName")
+            {
+                var data = filterName(datas, $("#firstNameChoice").val())
+            }
+            addLineToTable(data);
         }
 
         function addSelectPagination(data)
         {
             let nb = data.length / 50;
-            console.log(nb);
 
             for (i = 0 ; i < nb ; i++)
             {
@@ -62,9 +74,14 @@
             return nb = $("#selectPagination option:selected").val();
         }
 
-        function filterTable(data ,nb)
+        function filterPage(data ,nb)
         {
             return data.filter(element => (element.id-1)/50 <= nb && (element.id)/50 > nb - 1)
+        }
+
+        function filterName(data, firstName)
+        {
+            return data.filter(element => (element.name.first == firstName));
         }
 
         function deleteLineToTable()
@@ -76,14 +93,10 @@
         {
             data.forEach(element => {
             $("tbody").append("<tr>");
-            $("tbody tr:last").append("<th>")
-            $("tbody tr:last th:last").text(element.email);   
-            $("tbody tr:last").append("<th>");
-            $("tbody tr:last th:last").text(element.name.last);  
-            $("tbody tr:last").append("<th>");
-            $("tbody tr:last th:last").text(element.name.first);  
-            $("tbody tr:last").append("<th>");
-            $("tbody tr:last th:last").text(element.phone);  
+            $("tbody tr:last").append($("<td>").text(element.email));
+            $("tbody tr:last").append($("<td>").text(element.name.last));
+            $("tbody tr:last").append($("<td>").text(element.name.first));
+            $("tbody tr:last").append($("<td>").text(element.phone));
             });
         }
     </script>
